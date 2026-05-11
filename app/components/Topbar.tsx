@@ -3,10 +3,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { Plus, ChevronDown, X, Menu } from "lucide-react";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
-import Sidebar from "@/app/components/Sidebar";
 
 interface TopbarProps {
   title: string;
+  onMenuClick?: () => void;  // ← agregá el ?
 }
 
 function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
@@ -152,20 +152,15 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function Topbar({ title }: TopbarProps) {
-  const [showModal, setShowModal]   = useState(false);
-  const [sidebarOpen, setSidebar]   = useState(false);
+export default function Topbar({ title, onMenuClick }: TopbarProps) {
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      {/* El Sidebar recibe el estado desde acá — sin botón flotante */}
-      <Sidebar open={sidebarOpen} onClose={() => setSidebar(false)} />
-
       <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-6 flex-shrink-0">
-        {/* Hamburger solo en mobile, pegado al header */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setSidebar(true)}
+            onClick={onMenuClick}
             className="md:hidden text-gray-500 hover:text-gray-800 transition-colors"
             aria-label="Abrir menú"
           >
