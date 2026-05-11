@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/app/store/useAuthStore";
 import {
   LayoutDashboard, ArrowLeftRight, Tag,
-  BarChart2, Target, LogOut, LucideIcon,
+  BarChart2, Target, LogOut, LucideIcon, Menu, X,
 } from "lucide-react";
 
 interface NavItem {
@@ -24,9 +24,9 @@ const navItems: NavGroup[] = [
   {
     section: "Principal",
     items: [
-      { href: "/dashboard",    label: "Dashboard",    icon: LayoutDashboard },
-      { href: "/movimientos",  label: "Movimientos",  icon: ArrowLeftRight },
-      { href: "/categorias",   label: "Categorías",   icon: Tag },
+      { href: "/dashboard",   label: "Dashboard",   icon: LayoutDashboard },
+      { href: "/movimientos", label: "Movimientos", icon: ArrowLeftRight },
+      { href: "/categorias",  label: "Categorías",  icon: Tag },
     ],
   },
   {
@@ -38,7 +38,7 @@ const navItems: NavGroup[] = [
   },
 ];
 
-export default function Sidebar() {
+function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router   = useRouter();
   const { usuario, logout, initAuth } = useAuthStore();
@@ -49,6 +49,7 @@ export default function Sidebar() {
     logout();
     document.cookie = "token=; path=/; max-age=0";
     router.push("/login");
+    onClose?.();
   };
 
   const iniciales = usuario?.nombre
@@ -59,16 +60,27 @@ export default function Sidebar() {
     .toUpperCase() ?? "??";
 
   return (
-    <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100">
+      <div className="px-5 py-5 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
             F
           </div>
-          <span className="font-semibold text-gray-900 text-sm">Finanzio</span>
+          <div>
+            <span className="font-semibold text-gray-900 text-sm">Finanzio</span>
+            <p className="text-xs text-gray-400">Gestor de gastos</p>
+          </div>
         </div>
-        <p className="text-xs text-gray-400 mt-1 ml-9">Gestor de gastos</p>
+        {/* Botón cerrar solo en mobile */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors md:hidden"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -85,7 +97,8 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-5 py-2 text-sm transition-all border-l-2 ${
+                  onClick={onClose}
+                  className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-all border-l-2 ${
                     isActive
                       ? "bg-blue-50 text-blue-700 border-blue-600 font-medium"
                       : "text-gray-500 border-transparent hover:bg-gray-50 hover:text-gray-800"
@@ -118,6 +131,43 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+}
+
+export default function Sidebar() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* ── Botón hamburguesa (solo mobile) ── */}
+      <button
+        onClick={() => setOpen(true)}
+        className="md:hidden fixed top-3.5 left-4 z-40 text-gray-600 hover:text-gray-900 transition-colors"
+        aria-label="Abrir menú"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* ── Sidebar fijo en desktop ── */}
+      <aside className="hidden md:flex w-56 flex-shrink-0 flex-col h-full border-r border-gray-100">
+        <SidebarContent />
+      </aside>
+
+      {/* ── Drawer overlay en mobile/tablet ── */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setOpen(false)}
+          />
+          {/* Panel */}
+          <aside className="relative w-64 h-full shadow-xl">
+            <SidebarContent onClose={() => setOpen(false)} />
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

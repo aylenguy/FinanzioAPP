@@ -29,16 +29,12 @@ export default function LoginPage() {
 
   const validar = (): boolean => {
     const e: Errores = {};
-
     if (modo === "register" && nombre.trim().length < 2)
       e.nombre = "El nombre debe tener al menos 2 caracteres.";
-
     if (!validarEmail(email))
       e.email = "El email no es válido.";
-
     if (password.length < 6)
       e.password = "La contraseña debe tener al menos 6 caracteres.";
-
     setErrores(e);
     return Object.keys(e).length === 0;
   };
@@ -72,7 +68,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 w-full max-w-sm">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 w-full max-w-sm">
 
         {/* Logo */}
         <div className="flex items-center gap-2 mb-8">
@@ -86,7 +82,9 @@ export default function LoginPage() {
           {modo === "login" ? "Bienvenido de vuelta" : "Crear cuenta"}
         </h1>
         <p className="text-xs text-gray-400 mb-6">
-          {modo === "login" ? "Ingresá a tu cuenta para continuar." : "Completá los datos para registrarte."}
+          {modo === "login"
+            ? "Ingresá a tu cuenta para continuar."
+            : "Completá los datos para registrarte."}
         </p>
 
         <div className="flex flex-col gap-3">
@@ -95,14 +93,22 @@ export default function LoginPage() {
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Nombre</label>
               <input
-                className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none transition-colors ${
-                  errores.nombre ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-gray-400"
+                autoComplete="name"
+                className={`w-full border rounded-xl px-3 py-3 text-sm focus:outline-none transition-colors ${
+                  errores.nombre
+                    ? "border-red-300 focus:border-red-400"
+                    : "border-gray-200 focus:border-gray-400"
                 }`}
                 placeholder="Tu nombre"
                 value={nombre}
-                onChange={(e) => { setNombre(e.target.value); setErrores((p) => ({ ...p, nombre: undefined })); }}
+                onChange={(e) => {
+                  setNombre(e.target.value);
+                  setErrores((p) => ({ ...p, nombre: undefined }));
+                }}
               />
-              {errores.nombre && <p className="text-[11px] text-red-500 mt-1">{errores.nombre}</p>}
+              {errores.nombre && (
+                <p className="text-[11px] text-red-500 mt-1">{errores.nombre}</p>
+              )}
             </div>
           )}
 
@@ -111,14 +117,22 @@ export default function LoginPage() {
             <label className="text-xs text-gray-400 mb-1 block">Email</label>
             <input
               type="email"
-              className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none transition-colors ${
-                errores.email ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-gray-400"
+              autoComplete="email"
+              className={`w-full border rounded-xl px-3 py-3 text-sm focus:outline-none transition-colors ${
+                errores.email
+                  ? "border-red-300 focus:border-red-400"
+                  : "border-gray-200 focus:border-gray-400"
               }`}
               placeholder="tu@email.com"
               value={email}
-              onChange={(e) => { setEmail(e.target.value); setErrores((p) => ({ ...p, email: undefined })); }}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrores((p) => ({ ...p, email: undefined }));
+              }}
             />
-            {errores.email && <p className="text-[11px] text-red-500 mt-1">{errores.email}</p>}
+            {errores.email && (
+              <p className="text-[11px] text-red-500 mt-1">{errores.email}</p>
+            )}
           </div>
 
           {/* Contraseña */}
@@ -126,32 +140,49 @@ export default function LoginPage() {
             <label className="text-xs text-gray-400 mb-1 block">Contraseña</label>
             <input
               type="password"
-              className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none transition-colors ${
-                errores.password ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-gray-400"
+              autoComplete={modo === "login" ? "current-password" : "new-password"}
+              className={`w-full border rounded-xl px-3 py-3 text-sm focus:outline-none transition-colors ${
+                errores.password
+                  ? "border-red-300 focus:border-red-400"
+                  : "border-gray-200 focus:border-gray-400"
               }`}
               placeholder="••••••••"
               value={password}
-              onChange={(e) => { setPass(e.target.value); setErrores((p) => ({ ...p, password: undefined })); }}
+              onChange={(e) => {
+                setPass(e.target.value);
+                setErrores((p) => ({ ...p, password: undefined }));
+              }}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
-            {errores.password && <p className="text-[11px] text-red-500 mt-1">{errores.password}</p>}
+            {errores.password && (
+              <p className="text-[11px] text-red-500 mt-1">{errores.password}</p>
+            )}
           </div>
 
           {/* Error general */}
-          {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+          {error && (
+            <p className="text-xs text-red-500 text-center bg-red-50 rounded-lg py-2 px-3">
+              {error}
+            </p>
+          )}
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-600 text-white text-sm font-medium rounded-xl py-2.5 hover:bg-blue-700 transition-colors disabled:opacity-50 mt-1"
+            className="w-full bg-blue-600 text-white text-sm font-medium rounded-xl py-3 hover:bg-blue-700 transition-colors disabled:opacity-50 mt-1 active:scale-[0.98]"
           >
-            {loading ? "Cargando..." : modo === "login" ? "Iniciar sesión" : "Registrarse"}
+            {loading
+              ? "Cargando..."
+              : modo === "login" ? "Iniciar sesión" : "Registrarse"}
           </button>
         </div>
 
         <p className="text-xs text-center text-gray-400 mt-6">
           {modo === "login" ? "¿No tenés cuenta?" : "¿Ya tenés cuenta?"}{" "}
-          <button onClick={cambiarModo} className="text-blue-600 font-medium hover:underline">
+          <button
+            onClick={cambiarModo}
+            className="text-blue-600 font-medium hover:underline"
+          >
             {modo === "login" ? "Registrate" : "Iniciá sesión"}
           </button>
         </p>

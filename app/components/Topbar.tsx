@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Plus, ChevronDown, X } from "lucide-react";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
-// 👇 ya no importás CATEGORIAS
 
 interface TopbarProps {
   title: string;
@@ -17,13 +16,13 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
   const [monto, setMonto]           = useState("");
   const [categoria, setCategoria]   = useState<string>("");
   const [fecha, setFecha]           = useState(new Date().toISOString().split("T")[0]);
-  const [categorias, setCategorias] = useState<string[]>([]);  // 👈 desde la API
+  const [categorias, setCategorias] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchCategorias = async () => {
       const token = localStorage.getItem("token");
       const API = `${process.env.NEXT_PUBLIC_API_URL ?? "https://localhost:7232"}/api`;
-const res = await fetch(`${API}/Categorias`, {
+      const res = await fetch(`${API}/Categorias`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -49,16 +48,24 @@ const res = await fetch(`${API}/Categorias`, {
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
       onClick={handleClose}
     >
       <div
-        className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
+        /* En mobile: sheet desde abajo. En sm+: modal centrado */
+        className="bg-white w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-6 shadow-xl
+                   max-h-[90dvh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Handle visual en mobile */}
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 sm:hidden" />
+
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-gray-900">Nuevo movimiento</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button
+            onClick={handleClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
             <X size={16} />
           </button>
         </div>
@@ -69,7 +76,7 @@ const res = await fetch(`${API}/Categorias`, {
             <button
               key={t}
               onClick={() => setTipo(t)}
-              className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all ${
+              className={`flex-1 text-xs font-medium py-2 rounded-md transition-all ${
                 tipo === t
                   ? t === "gasto" ? "bg-red-500 text-white" : "bg-emerald-500 text-white"
                   : "text-gray-400 hover:text-gray-600"
@@ -89,7 +96,7 @@ const res = await fetch(`${API}/Categorias`, {
               placeholder="Ej: Supermercado"
               value={descripcion}
               onChange={(e) => setDesc(e.target.value)}
-              className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-300"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-300"
             />
           </div>
 
@@ -104,7 +111,7 @@ const res = await fetch(`${API}/Categorias`, {
                 placeholder="0"
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
-                className="w-full text-xs border border-gray-200 rounded-lg pl-6 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-300"
+                className="w-full text-sm border border-gray-200 rounded-lg pl-6 pr-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-300"
               />
             </div>
           </div>
@@ -116,9 +123,9 @@ const res = await fetch(`${API}/Categorias`, {
               <select
                 value={categoria}
                 onChange={(e) => setCategoria(e.target.value)}
-                className="appearance-none w-full text-xs border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                className="appearance-none w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
               >
-                {categorias.map((c) => (   // 👈 ya no es CATEGORIAS
+                {categorias.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -133,7 +140,7 @@ const res = await fetch(`${API}/Categorias`, {
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -141,14 +148,14 @@ const res = await fetch(`${API}/Categorias`, {
         <div className="flex gap-2 mt-5">
           <button
             onClick={handleClose}
-            className="flex-1 text-xs text-gray-500 border border-gray-200 rounded-lg py-2 hover:bg-gray-50 transition-colors"
+            className="flex-1 text-xs text-gray-500 border border-gray-200 rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
             disabled={!descripcion.trim() || !monto.trim()}
-            className="flex-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg py-2 transition-colors"
+            className="flex-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg py-2.5 transition-colors"
           >
             Guardar
           </button>
@@ -163,16 +170,20 @@ export default function Topbar({ title }: TopbarProps) {
 
   return (
     <>
-      <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-6 flex-shrink-0">
-        <h1 className="text-sm font-semibold text-gray-900">{title}</h1>
+      <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-6 flex-shrink-0">
+        {/* Espacio para el hamburger en mobile */}
+        <h1 className="text-sm font-semibold text-gray-900 pl-8 md:pl-0">{title}</h1>
+
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors px-3 py-1.5 rounded-lg"
         >
           <Plus size={14} />
-          Nuevo movimiento
+          {/* Texto completo en tablet+, solo ícono en mobile */}
+          <span className="hidden sm:inline">Nuevo movimiento</span>
         </button>
       </header>
+
       {showModal && <NuevoMovimientoModal onClose={() => setShowModal(false)} />}
     </>
   );
