@@ -22,7 +22,7 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const fetchCategorias = async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://localhost:7232/api/Categorias", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Categorias`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -32,7 +32,7 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
     };
     fetchCategorias();
   }, []);
-
+  
   const reset = useCallback(() => {
     setDesc(""); setMonto(""); setCategoria(categorias[0] ?? "");
     setTipo("gasto"); setFecha(new Date().toISOString().split("T")[0]);
