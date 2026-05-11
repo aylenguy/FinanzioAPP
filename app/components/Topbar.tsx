@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Plus, ChevronDown, X } from "lucide-react";
+import { Plus, ChevronDown, X, Menu } from "lucide-react";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
+import Sidebar from "@/app/components/Sidebar";
 
 interface TopbarProps {
   title: string;
@@ -52,25 +53,18 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
       onClick={handleClose}
     >
       <div
-        /* En mobile: sheet desde abajo. En sm+: modal centrado */
-        className="bg-white w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-6 shadow-xl
-                   max-h-[90dvh] overflow-y-auto"
+        className="bg-white w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-6 shadow-xl max-h-[90dvh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle visual en mobile */}
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 sm:hidden" />
 
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-gray-900">Nuevo movimiento</h2>
-          <button
-            onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={16} />
           </button>
         </div>
 
-        {/* Tipo */}
         <div className="flex rounded-lg border border-gray-200 p-0.5 mb-4">
           {(["gasto", "ingreso"] as const).map((t) => (
             <button
@@ -88,7 +82,6 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="flex flex-col gap-3">
-          {/* Descripción */}
           <div>
             <label className="text-[11px] text-gray-400 mb-1 block">Descripción</label>
             <input
@@ -99,8 +92,6 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-300"
             />
           </div>
-
-          {/* Monto */}
           <div>
             <label className="text-[11px] text-gray-400 mb-1 block">Monto</label>
             <div className="relative">
@@ -115,8 +106,6 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
               />
             </div>
           </div>
-
-          {/* Categoría */}
           <div>
             <label className="text-[11px] text-gray-400 mb-1 block">Categoría</label>
             <div className="relative">
@@ -132,8 +121,6 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
               <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             </div>
           </div>
-
-          {/* Fecha */}
           <div>
             <label className="text-[11px] text-gray-400 mb-1 block">Fecha</label>
             <input
@@ -166,20 +153,32 @@ function NuevoMovimientoModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function Topbar({ title }: TopbarProps) {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal]   = useState(false);
+  const [sidebarOpen, setSidebar]   = useState(false);
 
   return (
     <>
+      {/* El Sidebar recibe el estado desde acá — sin botón flotante */}
+      <Sidebar open={sidebarOpen} onClose={() => setSidebar(false)} />
+
       <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-6 flex-shrink-0">
-        {/* Espacio para el hamburger en mobile */}
-        <h1 className="text-sm font-semibold text-gray-900 pl-8 md:pl-0">{title}</h1>
+        {/* Hamburger solo en mobile, pegado al header */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setSidebar(true)}
+            className="md:hidden text-gray-500 hover:text-gray-800 transition-colors"
+            aria-label="Abrir menú"
+          >
+            <Menu size={20} />
+          </button>
+          <h1 className="text-sm font-semibold text-gray-900">{title}</h1>
+        </div>
 
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors px-3 py-1.5 rounded-lg"
         >
           <Plus size={14} />
-          {/* Texto completo en tablet+, solo ícono en mobile */}
           <span className="hidden sm:inline">Nuevo movimiento</span>
         </button>
       </header>
