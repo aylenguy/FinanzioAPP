@@ -15,7 +15,7 @@ interface AuthStore {
 }
 
 // ── API base desde variable de entorno ───────────────────────────────────────
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:7232/api";
+const API = `${process.env.NEXT_PUBLIC_API_URL ?? "https://localhost:7232"}/api`;
 
 export const useAuthStore = create<AuthStore>((set) => ({
   token: null,
