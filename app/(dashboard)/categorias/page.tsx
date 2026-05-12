@@ -1,6 +1,5 @@
 "use client";
 
-import Topbar from "@/app/components/Topbar";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
 import { useEffect, useState } from "react";
 import {
@@ -152,7 +151,7 @@ export default function CategoriasPage() {
 
   return (
     <>
-      <Topbar title="Categorías" />
+     
 
       {modal && (
         <CategoriaModal

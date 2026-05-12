@@ -1,6 +1,5 @@
 "use client";
 
-import Topbar from "@/app/components/Topbar";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
 import { useEffect, useMemo } from "react";
 import {
@@ -87,7 +86,7 @@ export default function ReportesPage() {
 
   return (
     <>
-      <Topbar title="Reportes" />
+      
 
       <main className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-5">
 

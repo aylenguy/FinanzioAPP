@@ -1,6 +1,5 @@
 "use client";
 
-import Topbar from "@/app/components/Topbar";
 import { useEffect, useState } from "react";
 import { Trash2, Pencil, X } from "lucide-react";
 import { useFinanzasStore, Movimiento } from "@/app/store/useFinanzasStore";
@@ -169,7 +168,7 @@ export default function MovimientosPage() {
 
   return (
     <>
-      <Topbar title="Movimientos" />
+    
 
       {editando && (
         <EditModal

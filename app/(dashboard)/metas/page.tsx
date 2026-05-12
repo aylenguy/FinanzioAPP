@@ -1,6 +1,5 @@
 "use client";
 
-import Topbar from "@/app/components/Topbar";
 import { useFinanzasStore } from "@/app/store/useFinanzasStore";
 import { useEffect, useState } from "react";
 import {
@@ -203,7 +202,7 @@ export default function MetasPage() {
 
   return (
     <>
-      <Topbar title="Metas" />
+     
 
       {modal && (
         <MetaModal
